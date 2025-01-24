@@ -1,72 +1,56 @@
-﻿using System.Data;
-using System.Xml;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Roman_to_Integer
+class Solution
 {
-    internal class Program
+    public int RomanToInt(string s)
     {
-        public class Solution
+        // Словник для відповідності римських символів і їх значень
+        var romanValues = new Dictionary<char, int>
         {
-            private string[] arrRowNumber =  new string[] {"I", "V", "X", "L", "C", "D", "M"};
+            { 'I', 1 },
+            { 'V', 5 },
+            { 'X', 10 },
+            { 'L', 50 },
+            { 'C', 100 },
+            { 'D', 500 },
+            { 'M', 1000 }
+        };
 
-            private static Dictionary<string, int> romInt = new Dictionary<string, int>()
+        int total = 0;
+        int previousValue = 0;
+
+        // Проходимо через символи рядка з кінця
+        for (int i = s.Length - 1; i >= 0; i--)
+        {
+            int currentValue = romanValues[s[i]];
+
+            // Віднімання або додавання на основі значень
+            if (currentValue < previousValue)
             {
-                { "I", 1 },
-                { "V", 5 },
-                { "X", 10 },
-                { "L", 50 },
-                { "C", 100 },
-                { "D", 500 },
-                { "M", 1000 }
-            };
-
-            public int RomanToInt(string s)
-            {
-                int result = 0;
-                s = s.ToUpper();
-                string[] arrRom = s.Select(c => c.ToString()).ToArray();
-
-                // I X C   0 2 4                
-                for (int i = 0; i < arrRom.Length; i++)
-                {
-                    if (arrRom[i] == "I" || arrRom[i] == "X" || arrRom[i] == "C"  )
-                    {
-                        if (i == arrRom.Length - 1)
-                        { 
-                            result += romInt[arrRom[i]]; 
-                            break;
-                        }
-
-                        int sumbolIndex = Array.IndexOf(arrRowNumber, arrRom[i]);
-
-                        if (arrRom[i + 1] == arrRowNumber[sumbolIndex + 1] || arrRom[i + 1] == arrRowNumber[sumbolIndex + 2])
-                        {
-                            result += romInt[arrRom[i + 1]] - romInt[arrRom[i]];
-                            i++;
-
-                        }
-                        else
-                        {
-                            result += romInt[arrRom[i]];
-                        }
-
-                    }
-                    else
-                    {
-                        result += romInt[arrRom[i]];
-                    }
-
-                }
-
-
-                return result;
+                total -= currentValue; // Віднімання
             }
-        }
-        static void Main(string[] args)
-        {
-            var number = new Solution();
+            else
+            {
+                total += currentValue; // Додавання
+            }
 
-            Console.WriteLine( number.RomanToInt("mcmxcivi"));
+            previousValue = currentValue;
         }
+
+        return total;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var converter = new Solution();
+
+        // Приклади використання
+        Console.WriteLine(converter.RomanToInt("III"));       // Вихід: 3
+        Console.WriteLine(converter.RomanToInt("LVIII"));     // Вихід: 58
+        Console.WriteLine(converter.RomanToInt("MCMXCIV"));   // Вихід: 1994
     }
 }
